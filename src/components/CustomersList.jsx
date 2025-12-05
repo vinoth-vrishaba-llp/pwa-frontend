@@ -11,22 +11,28 @@ const CustomersList = ({
   onLogout,
   onSelectCustomer,
   onMount,        // called when component mounts
-  page = 1,       // 🔹 NEW: current page
-  totalPages = 1, // 🔹 NEW: total pages
-  onPageChange,   // 🔹 NEW: (nextPage) => void
+  page = 1,       // current page
+  totalPages = 1, // total pages
+  onPageChange,   // (nextPage) => void
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const safeCustomers = Array.isArray(customers) ? customers : [];
 
-  // Load customers when component mounts
+  console.log("CustomersList pagination:", {
+    page,
+    totalPages,
+    count: safeCustomers.length,
+  });
+
+  // ✅ run only once on mount
   useEffect(() => {
     if (onMount) {
       onMount();
     }
-  }, [onMount]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // Search filter (client-side on current page)
   const filteredCustomers = useMemo(() => {
     let result = [...safeCustomers];
 
@@ -156,36 +162,36 @@ const CustomersList = ({
                 </div>
               ))}
 
-              {/* 🔹 Pagination controls */}
-              {totalPages > 1 && (
-                <div className="flex items-center justify-between pt-2">
-                  <button
-                    onClick={handlePrev}
-                    disabled={page <= 1}
-                    className={`px-3 py-1 text-xs rounded-lg border ${
-                      page <= 1
-                        ? "border-gray-200 text-gray-300 cursor-not-allowed"
-                        : "border-gray-300 text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    Previous
-                  </button>
-                  <span className="text-xs text-gray-500">
-                    Page {page} of {totalPages}
-                  </span>
-                  <button
-                    onClick={handleNext}
-                    disabled={page >= totalPages}
-                    className={`px-3 py-1 text-xs rounded-lg border ${
-                      page >= totalPages
-                        ? "border-gray-200 text-gray-300 cursor-not-allowed"
-                        : "border-gray-300 text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    Next
-                  </button>
-                </div>
-              )}
+              {/* Pagination controls */}
+              <div className="flex items-center justify-between pt-2">
+                <button
+                  onClick={handlePrev}
+                  disabled={page <= 1}
+                  className={`px-3 py-1 text-xs rounded-lg border ${
+                    page <= 1
+                      ? "border-gray-200 text-gray-300 cursor-not-allowed"
+                      : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  Previous
+                </button>
+
+                <span className="text-xs text-gray-500">
+                  Page {page} of {totalPages}
+                </span>
+
+                <button
+                  onClick={handleNext}
+                  disabled={page >= totalPages}
+                  className={`px-3 py-1 text-xs rounded-lg border ${
+                    page >= totalPages
+                      ? "border-gray-200 text-gray-300 cursor-not-allowed"
+                      : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  Next
+                </button>
+              </div>
             </>
           )}
         </div>
